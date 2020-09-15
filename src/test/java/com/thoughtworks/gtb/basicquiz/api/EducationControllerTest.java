@@ -58,6 +58,7 @@ class EducationControllerTest {
         mockMvc.perform(post("/users/1/educations")
                 .content(jsonStudent)
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", is("标题不能为空")))
                 .andExpect(status().isBadRequest());
     }
 }
