@@ -5,6 +5,8 @@ import com.thoughtworks.gtb.basicquiz.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/users")
@@ -16,13 +18,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User getUser(@PathVariable long id) {
+    public User getUser(@PathVariable long id) throws Exception{
         return userService.getUserById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         return userService.createUser(user);
     }
 }
