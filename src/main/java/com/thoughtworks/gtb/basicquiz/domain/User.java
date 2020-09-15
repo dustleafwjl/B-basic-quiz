@@ -13,10 +13,10 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class User {
     private long id;
-    @NotNull
+    @NotNull(message = "用户名不能为空")
     private String name;
     private long age;
-    @NotNull
+    @NotNull(message = "用户头像不能为空")
     private String avatar;
     private String description;
 }

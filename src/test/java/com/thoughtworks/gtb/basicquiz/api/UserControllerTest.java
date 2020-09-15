@@ -55,6 +55,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonStudent))
+                .andExpect(jsonPath("$.message", is("用户名不能为空")))
                 .andExpect(status().isBadRequest());
     }
 }

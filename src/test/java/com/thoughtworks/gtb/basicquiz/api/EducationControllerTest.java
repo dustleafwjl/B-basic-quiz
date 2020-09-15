@@ -25,6 +25,9 @@ class EducationControllerTest {
     public void should_return_educations_when_get_education_given_user_id() throws Exception {
         mockMvc.perform(get("/users/1/educations"))
                 .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].userId", is(1)))
+                .andExpect(jsonPath("$[0].title", is("First level graduation in Graphic Design")))
+                .andExpect(jsonPath("$[1].userId", is(1)))
                 .andExpect(status().isOk());
     }
 
@@ -42,6 +45,10 @@ class EducationControllerTest {
                 .content(jsonStudent)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].userId", is(1)))
+                .andExpect(jsonPath("$[1].userId", is(1)))
+                .andExpect(jsonPath("$[2].userId", is(1)))
+                .andExpect(jsonPath("$[2].title", is("Secondary school specializing in artistic")))
                 .andExpect(status().isCreated());
     }
 
