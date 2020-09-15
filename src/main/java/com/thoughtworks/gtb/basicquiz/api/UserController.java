@@ -16,7 +16,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User getUser(@PathVariable Integer id) {
+    public User getUser(@PathVariable long id) {
         return userService.getUserById(id);
     }
 

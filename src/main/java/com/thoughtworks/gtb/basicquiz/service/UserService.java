@@ -11,7 +11,7 @@ public class UserService {
     UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
-    public User getUserById(Integer id) {
+    public User getUserById(long id) {
         return userRepo.findById(id);
     }
 

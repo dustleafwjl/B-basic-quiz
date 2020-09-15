@@ -7,11 +7,11 @@ import java.util.HashMap;
 
 @Component
 public class UserRepo {
-    static HashMap<Integer, User> users = new HashMap<Integer, User>() {{
-        put(1, User.builder().id(1).name("KAMIL").age(24).avatar("https://inews.gtimg.com/newsapp_match/0/3581582328/0").description("Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus, non, dolorem, cumque distinctio magni quam expedita velit laborum sunt amet facere tempora ut fuga aliquam ad asperiores voluptatem dolorum! Quasi.").build());
+    static HashMap<Long, User> users = new HashMap<Long, User>() {{
+        put((long) 1, User.builder().id(1).name("KAMIL").age(24).avatar("https://inews.gtimg.com/newsapp_match/0/3581582328/0").description("Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus, non, dolorem, cumque distinctio magni quam expedita velit laborum sunt amet facere tempora ut fuga aliquam ad asperiores voluptatem dolorum! Quasi.").build());
     }};
-    static int generateId = 1;
-    public User findById(Integer id) {
+    static long generateId = 1;
+    public User findById(long id) {
         return users.get(id);
     }
 
