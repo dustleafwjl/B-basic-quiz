@@ -24,7 +24,7 @@ public class EducationController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public List<Education> createEducationByUserId(@PathVariable long id, Education education) {
+    public List<Education> createEducationByUserId(@PathVariable long id, @RequestBody Education education) {
         return educationService.createEducationByUserId(id, education);
     }
 }
