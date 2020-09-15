@@ -24,4 +24,11 @@ public class EducationRepo {
     public List<Education> findByUserId(long userId) {
         return educations.values().stream().filter(ele -> ele.getUserId() == userId).collect(Collectors.toList());
     }
+
+    public List<Education> save(Education education) {
+        generateId ++;
+        education.setId(generateId);
+        educations.put(generateId, education);
+        return findByUserId(education.getUserId());
+    }
 }

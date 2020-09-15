@@ -17,4 +17,9 @@ public class EducationService {
     public List<Education> getEducationByUserId(long id) {
         return educationRepo.findByUserId(id);
     }
+
+    public List<Education> createEducationByUserId(long id, Education education) {
+        education.setUserId(id);
+        return educationRepo.save(education);
+    }
 }

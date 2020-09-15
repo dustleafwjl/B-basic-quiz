@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-//@RequestMapping("/user/{id}/educations")
+@RequestMapping("/users/{id}/educations")
 public class EducationController {
 
     private final EducationService educationService;
@@ -17,9 +17,14 @@ public class EducationController {
     EducationController(EducationService educationService) {
         this.educationService = educationService;
     }
-    @GetMapping("/users/{id}/educations")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Education> getEducationByUserId(@PathVariable long id) {
         return educationService.getEducationByUserId(id);
+    }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Education> createEducationByUserId(@PathVariable long id, Education education) {
+        return educationService.createEducationByUserId(id, education);
     }
 }
