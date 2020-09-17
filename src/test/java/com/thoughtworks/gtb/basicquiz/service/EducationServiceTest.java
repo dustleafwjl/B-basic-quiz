@@ -55,6 +55,7 @@ class EducationServiceTest {
 
     @Test
     void should_create_educations_success_when_service_getEducation_given_user_id_and_new_education() throws UserHasNotEducationException {
+        // GTB: - mock 不能用在这里，这个不是 mock
         Education mockEducation = Education.builder().id(1).description("ddd").userId(1).year(1201).build();
         educationService.createEducationByUserId(1, mockEducation);
         verify(educationRepo).save(mockEducation);

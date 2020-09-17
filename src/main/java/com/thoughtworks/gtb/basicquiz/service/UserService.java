@@ -12,7 +12,9 @@ public class UserService {
     UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
+
     public User getUserById(long id) throws Exception{
+        // GTB: 这一段写的太低级了，跟大家交流一下，看看怎么改进！（用 Optional）
         User user  = null;
         user = userRepo.findById(id);
         if (user == null) {

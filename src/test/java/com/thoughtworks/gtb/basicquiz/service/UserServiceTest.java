@@ -16,10 +16,12 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// GTB: 可以看看不用 @SpringBootTest 行不行？
 @SpringBootTest
 class UserServiceTest {
     UserService userService;
 
+    // GTB: + 用到了@MockBean，不错，高级！
     @MockBean
     UserRepo userRepo;
 
