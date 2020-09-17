@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
@@ -20,15 +21,15 @@ public class EducationRepo {
                 .description("Eos, explicabo, nam, tenetur et ab eius deserunt aspernatur ipsum ducimus quibusdam quis voluptatibus.")
                 .build());
     }};
-    static long generateId = 2;
+    static AtomicLong generateId = new AtomicLong(2);
     public List<Education> findByUserId(long userId) {
         return educations.values().stream().filter(ele -> ele.getUserId() == userId).collect(Collectors.toList());
     }
 
     public List<Education> save(Education education) {
-        generateId ++;
-        education.setId(generateId);
-        educations.put(generateId, education);
+        long id = generateId.incrementAndGet();
+        education.setId(id);
+        educations.put(id, education);
         return findByUserId(education.getUserId());
     }
 }
