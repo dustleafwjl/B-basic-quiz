@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -22,7 +23,10 @@ public class Education {
     @Id
     @GeneratedValue
     private long id;
-    private long userId;
+
+    @ManyToOne
+    private User user;
+
     private long year;
     @NotNull(message = "标题不能为空")
     private String title;

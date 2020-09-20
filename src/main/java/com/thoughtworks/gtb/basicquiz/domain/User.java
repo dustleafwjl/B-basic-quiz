@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
 
 @Entity
 @Data
@@ -26,4 +28,7 @@ public class User {
     @NotNull(message = "用户头像不能为空")
     private String avatar;
     private String description;
+
+    @OneToMany
+    private List<Education> educations;
 }

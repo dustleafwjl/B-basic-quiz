@@ -2,6 +2,7 @@ package com.thoughtworks.gtb.basicquiz.api;
 
 import com.thoughtworks.gtb.basicquiz.domain.Education;
 import com.thoughtworks.gtb.basicquiz.exception.UserHasNotEducationException;
+import com.thoughtworks.gtb.basicquiz.exception.UserIsNotFoundException;
 import com.thoughtworks.gtb.basicquiz.service.EducationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class EducationController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public List<Education> createEducationByUserId(@PathVariable long id, @Valid @RequestBody Education education) {
+    public List<Education> createEducationByUserId(@PathVariable long id, @Valid @RequestBody Education education) throws UserIsNotFoundException {
         return educationService.createEducationByUserId(id, education);
     }
 }
