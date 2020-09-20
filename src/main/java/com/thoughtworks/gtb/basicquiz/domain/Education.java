@@ -2,6 +2,7 @@ package com.thoughtworks.gtb.basicquiz.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.thoughtworks.gtb.basicquiz.utils.BtyesSize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +30,10 @@ public class Education {
 
     private long year;
     @NotNull(message = "标题不能为空")
+    @BtyesSize(min = 1, max = 256)
     private String title;
+
     @NotNull(message = "描述不能为空")
+    @BtyesSize(min = 1, max = 4096)
     private String description;
 }
