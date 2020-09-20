@@ -1,5 +1,7 @@
 package com.thoughtworks.gtb.basicquiz.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.gtb.basicquiz.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,11 +25,15 @@ class UserControllerTest {
         String avatar = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1600151586026&di=b45aa215fde87578c6cfafc3f12b391c&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201706%2F10%2F20170610192627_yhAMN.thumb.700_0.jpeg";
 
         String jsonStudent = "{\"name\": \"KAMIL\", \"age\": 24, \"avatar\": \""+ avatar +"\", \"description\": \"\"}";
-        mockMvc.perform(post("/users")
+        String saveUser = mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonStudent))
-                .andExpect(status().isCreated());
-        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(get("/users/"+objectMapper.readValue(saveUser, User.class).getId()))
                 .andExpect(jsonPath("$.name", is("KAMIL")))
                 .andExpect(jsonPath("$.age", is(24)))
                 .andExpect(status().isOk());
