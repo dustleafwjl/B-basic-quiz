@@ -2,7 +2,7 @@ package com.thoughtworks.gtb.basicquiz.service;
 
 import com.thoughtworks.gtb.basicquiz.domain.Education;
 import com.thoughtworks.gtb.basicquiz.exception.UserHasNotEducationException;
-import com.thoughtworks.gtb.basicquiz.repository.EducationRepo;
+import com.thoughtworks.gtb.basicquiz.repository.EducationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,7 +21,7 @@ class EducationServiceTest {
     EducationService educationService;
 
     @MockBean
-    EducationRepo educationRepo;
+    EducationRepository educationRepo;
 
     @BeforeEach
     void setUp() {
@@ -30,7 +30,7 @@ class EducationServiceTest {
 
     @Test
     void should_throw_user_has_not_deucation_exception_when_service_getEducation_given_wrong_user_id() {
-        when(educationRepo.findByUserId(anyInt())).thenReturn(new ArrayList<Education>());
+        when(educationRepo.findAllByUserId(anyLong())).thenReturn(new ArrayList<Education>());
         assertThrows(
             UserHasNotEducationException.class,
             () -> {
@@ -44,7 +44,7 @@ class EducationServiceTest {
             add(Education.builder().id(1).description("ddd").title("demo title").userId(1).year(1201).build());
             add(Education.builder().id(2).description("ddd").title("demo title").userId(1).year(1201).build());
         }};
-        when(educationRepo.findByUserId(1)).thenReturn(educations);
+        when(educationRepo.findAllByUserId((long) 1)).thenReturn(educations);
         assertEquals(educationService.getEducationByUserId(1), educations);
     }
 

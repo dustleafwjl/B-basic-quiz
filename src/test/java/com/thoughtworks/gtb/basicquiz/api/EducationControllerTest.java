@@ -1,5 +1,8 @@
 package com.thoughtworks.gtb.basicquiz.api;
 
+import com.thoughtworks.gtb.basicquiz.repository.EducationRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +23,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class EducationControllerTest {
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    EducationRepository educationRepository;
+
+    @BeforeEach
+    public void setup() throws Exception{
+        String jsonStudent = "{\"description\": \"Eos, explicabo\",\"year\": 2011, \"title\": \"First level graduation in Graphic Design\"}";
+        mockMvc.perform(post("/users/1/educations")
+                .content(jsonStudent)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        mockMvc.perform(post("/users/1/educations")
+                .content(jsonStudent)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+    }
+
+    @AfterEach
+    public void after() {
+        educationRepository.deleteAll();
+    }
 
     @Test
     public void should_return_educations_when_get_education_given_user_id() throws Exception {
