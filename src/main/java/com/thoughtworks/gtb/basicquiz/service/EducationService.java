@@ -2,7 +2,7 @@ package com.thoughtworks.gtb.basicquiz.service;
 
 import com.thoughtworks.gtb.basicquiz.domain.Education;
 import com.thoughtworks.gtb.basicquiz.exception.UserHasNotEducationException;
-import com.thoughtworks.gtb.basicquiz.repo.EducationRepo;
+import com.thoughtworks.gtb.basicquiz.repository.EducationRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,6 @@
-package com.thoughtworks.gtb.basicquiz.repo;
+package com.thoughtworks.gtb.basicquiz.repository;
 
 import com.thoughtworks.gtb.basicquiz.domain.Education;
-import com.thoughtworks.gtb.basicquiz.domain.User;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

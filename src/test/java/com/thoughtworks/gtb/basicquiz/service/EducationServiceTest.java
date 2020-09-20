@@ -2,17 +2,12 @@ package com.thoughtworks.gtb.basicquiz.service;
 
 import com.thoughtworks.gtb.basicquiz.domain.Education;
 import com.thoughtworks.gtb.basicquiz.exception.UserHasNotEducationException;
-import com.thoughtworks.gtb.basicquiz.repo.EducationRepo;
+import com.thoughtworks.gtb.basicquiz.repository.EducationRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,9 +51,9 @@ class EducationServiceTest {
     @Test
     void should_create_educations_success_when_service_getEducation_given_user_id_and_new_education() throws UserHasNotEducationException {
         // GTB: - mock 不能用在这里，这个不是 mock
-        Education mockEducation = Education.builder().id(1).description("ddd").userId(1).year(1201).build();
-        educationService.createEducationByUserId(1, mockEducation);
-        verify(educationRepo).save(mockEducation);
+        Education education = Education.builder().id(1).description("ddd").userId(1).year(1201).build();
+        educationService.createEducationByUserId(1, education);
+        verify(educationRepo).save(education);
     }
 
 }
