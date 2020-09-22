@@ -1,96 +1,117 @@
 package com.thoughtworks.gtb.basicquiz.api;
 
-import com.thoughtworks.gtb.basicquiz.domain.User;
-import com.thoughtworks.gtb.basicquiz.repository.EducationRepository;
-import com.thoughtworks.gtb.basicquiz.repository.UserRepository;
+import com.thoughtworks.gtb.basicquiz.domain.Education;
+import com.thoughtworks.gtb.basicquiz.exception.UserHasNotEducationException;
+import com.thoughtworks.gtb.basicquiz.service.EducationService;
+import com.thoughtworks.gtb.basicquiz.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(EducationController.class)
+@AutoConfigureJsonTesters
 class EducationControllerTest {
-    @Autowired
-    MockMvc mockMvc;
+
+    @MockBean
+    private UserService userService;
+    @MockBean
+    private EducationService educationService;
 
     @Autowired
-    EducationRepository educationRepository;
+    private MockMvc mockMvc;
 
     @Autowired
-    UserRepository userRepository;
+    private JacksonTester<List<Education>> educationsJacksonTester;
+    @Autowired
+    private JacksonTester<Education> educationJacksonTester;
 
-    private User user = null;
+    private List<Education> educations = new ArrayList<>();
+
+
+
     @BeforeEach
-    public void setup() throws Exception{
-        String avatar = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1600151586026&di=b45aa215fde87578c6cfafc3f12b391c&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201706%2F10%2F20170610192627_yhAMN.thumb.700_0.jpeg";
-        user = userRepository.save(User.builder().avatar(avatar).name("Tom").age(18).description("demosdafsadf").build());
-        String jsonStudent = "{\"description\": \"Eos, explicabo\",\"year\": 2011, \"title\": \"First level graduation in Graphic Design\"}";
-        mockMvc.perform(post("/users/"+user.getId()+"/educations")
-                .content(jsonStudent)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-        mockMvc.perform(post("/users/"+user.getId()+"/educations")
-                .content(jsonStudent)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+    public void beforeEach() {
+        Education firstEducation = Education.builder()
+                .description("demo test is good")
+                .title("education test")
+                .year(2000)
+                .build();
+        Education secondEducation = Education.builder()
+                .description("demo test is good second")
+                .title("education second test")
+                .year(2002)
+                .build();
+        educations.add(firstEducation);
+        educations.add(secondEducation);
     }
 
     @AfterEach
-    public void after() {
-        educationRepository.deleteAll();
+    public void afterEach() {
+        Mockito.reset(educationService);
+        Mockito.reset(userService);
     }
 
-    @Test
-    public void should_return_educations_when_get_education_given_user_id() throws Exception {
-        mockMvc.perform(get("/users/"+user.getId()+"/educations"))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].user.id", is((int)user.getId())))
-                .andExpect(jsonPath("$[0].title", is("First level graduation in Graphic Design")))
-                .andExpect(jsonPath("$[1].user.id", is((int)user.getId())))
-                .andExpect(status().isOk());
+    @Nested
+    class getEducationByUserId{
+        @Test
+        public void should_get_educations_when_given_user_id() throws Exception {
+            when(educationService.getEducationByUserId(123L)).thenReturn(educations);
+            MockHttpServletResponse response = mockMvc.perform(get("/users/{id}/educations", 123))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse();
+            assertThat(response.getContentAsString()).isEqualTo(
+                    educationsJacksonTester.write(educations).getJson()
+            );
+            verify(educationService).getEducationByUserId(123L);
+        }
+        @Test
+        public void should_throw_execption_when_given_wrong_userId() throws Exception {
+            when(educationService.getEducationByUserId(123L)).thenThrow(new UserHasNotEducationException());
+            mockMvc.perform(get("/users/{id}/educations", 123))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message", containsString("该用户没有教育经历")));
+            verify(educationService).getEducationByUserId(123L);
+        }
     }
 
-    @Test
-    public void should_return_not_found_when_get_education_given_wrong_user_id() throws Exception {
-        mockMvc.perform(get("/users/36/educations"))
-                .andExpect(jsonPath("$.message",is("该用户没有教育经历")))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void should_return_educations_when_post_education_given_new_education_and_user_id() throws Exception {
-        String jsonStudent = "{\"description\": \"Eos, explicabo\",\"year\": 2011, \"title\": \"Secondary school specializing in artistic\"}";
-        mockMvc.perform(post("/users/"+user.getId()+"/educations")
-                .content(jsonStudent)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].user.id", is((int)user.getId())))
-                .andExpect(jsonPath("$[1].user.id", is((int)user.getId())))
-                .andExpect(jsonPath("$[2].user.id", is((int)user.getId())))
-                .andExpect(jsonPath("$[2].title", is("Secondary school specializing in artistic")))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    public void should_return_bad_request_when_post_education_given_new_education_has_not_title() throws Exception {
-        String jsonStudent = "{\"description\" : \"Eos, explicabo\", \"year\": 2011}";
-        mockMvc.perform(post("/users/"+user.getId()+"/educations")
-                .content(jsonStudent)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message", is("标题不能为空")))
-                .andExpect(status().isBadRequest());
+    @Nested
+    class createEducationByUserId{
+        @Test
+        public void should_return_new_educations_when_given_uuer_id_and_eduaction() throws Exception {
+            when(educationService.createEducationByUserId(123L, educations.get(0))).thenReturn(educations);
+            MockHttpServletResponse response = mockMvc.perform(post("/users/{id}/educations", 123)
+                    .content(educationJacksonTester.write(educations.get(0)).getJson())
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated())
+                    .andReturn()
+                    .getResponse();
+            assertThat(response.getContentAsString()).isEqualTo(
+                    educationsJacksonTester.write(educations).getJson()
+            );
+            verify(educationService).createEducationByUserId(123L, educations.get(0));
+        }
     }
 }
