@@ -7,6 +7,7 @@ import com.thoughtworks.gtb.basicquiz.exception.UserIsNotFoundException;
 import com.thoughtworks.gtb.basicquiz.repository.EducationRepository;
 import com.thoughtworks.gtb.basicquiz.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,33 +35,38 @@ class EducationServiceTest {
         educationService = new EducationService(educationRepo, userRepository);
     }
 
-    @Test
-    void should_throw_user_has_not_deucation_exception_when_service_getEducation_given_wrong_user_id() {
-        when(educationRepo.findAllByUserId(anyLong())).thenReturn(new ArrayList<Education>());
-        assertThrows(
-            UserHasNotEducationException.class,
-            () -> {
-                educationService.getEducationByUserId(1);
-            });
+    @Nested
+    class getEducationByUserId {
+        @Test
+        void should_throw_user_has_not_deucation_exception_when_service_getEducation_given_wrong_user_id() {
+            when(educationRepo.findAllByUserId(anyLong())).thenReturn(new ArrayList<Education>());
+            assertThrows(
+                    UserHasNotEducationException.class,
+                    () -> {
+                        educationService.getEducationByUserId(1);
+                    });
+        }
+
+        @Test
+        void should_get_educations_success_when_service_getEducation_given_user_id() throws UserHasNotEducationException {
+            List<Education> educations = new ArrayList<Education>(){{
+                add(Education.builder().id(1).description("ddd").title("demo title").year(1201).build());
+                add(Education.builder().id(2).description("ddd").title("demo title").year(1201).build());
+            }};
+            when(educationRepo.findAllByUserId((long) 1)).thenReturn(educations);
+            assertEquals(educationService.getEducationByUserId(1), educations);
+        }
     }
 
-    @Test
-    void should_get_educations_success_when_service_getEducation_given_user_id() throws UserHasNotEducationException {
-        List<Education> educations = new ArrayList<Education>(){{
-            add(Education.builder().id(1).description("ddd").title("demo title").year(1201).build());
-            add(Education.builder().id(2).description("ddd").title("demo title").year(1201).build());
-        }};
-        when(educationRepo.findAllByUserId((long) 1)).thenReturn(educations);
-        assertEquals(educationService.getEducationByUserId(1), educations);
+    @Nested
+    class createEducationByUserId {
+        @Test
+        void should_create_educations_success_when_service_getEducation_given_user_id_and_new_education() throws UserHasNotEducationException, UserIsNotFoundException {
+            // GTB: - mock 不能用在这里，这个不是 mock
+            Education education = Education.builder().description("ddd").year(1201).build();
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().avatar("dd").build()));
+            educationService.createEducationByUserId(anyLong(), education);
+            verify(educationRepo).save(education);
+        }
     }
-
-    @Test
-    void should_create_educations_success_when_service_getEducation_given_user_id_and_new_education() throws UserHasNotEducationException, UserIsNotFoundException {
-        // GTB: - mock 不能用在这里，这个不是 mock
-        Education education = Education.builder().description("ddd").year(1201).build();
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().avatar("dd").build()));
-        educationService.createEducationByUserId(anyLong(), education);
-        verify(educationRepo).save(education);
-    }
-
 }
